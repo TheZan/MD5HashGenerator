@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Text.Json;
 
@@ -16,22 +17,31 @@ namespace HashGenerator
 
             List<string> files = DirSearch(path);
 
-            List<FileHash> hashes = new List<FileHash>();
-
-            Console.WriteLine("Список файлов:");
-
-            foreach (var file in files)
+            if (files.Any())
             {
-                hashes.Add(new FileHash()
+
+                List<FileHash> hashes = new List<FileHash>();
+
+                Console.WriteLine("Список файлов:");
+
+                foreach (var file in files)
                 {
-                    FileName = file.Substring(file.IndexOf($"{endFolder}") + endFolder.Length + 1, file.Length - file.IndexOf($"{endFolder}") - endFolder.Length - 1),
-                    Hash = CalculateMD5(file)
-                });
+                    hashes.Add(new FileHash()
+                    {
+                        FileName = file.Substring(file.IndexOf($"{endFolder}") + endFolder.Length + 1,
+                            file.Length - file.IndexOf($"{endFolder}") - endFolder.Length - 1),
+                        Hash = CalculateMD5(file)
+                    });
 
-                Console.WriteLine(file);
+                    Console.WriteLine(file);
+                }
+
+                GenerateJson(hashes);
             }
-
-            GenerateJson(hashes);
+            else
+            {
+                Console.WriteLine("В выбранной папке файлы не найдены. Для завершения работы нажмите любую клавишу...");
+            }
 
             Console.ReadKey();
         }
@@ -80,7 +90,7 @@ namespace HashGenerator
                     await JsonSerializer.SerializeAsync(fs, hashes);
                 }
 
-                Console.WriteLine("Генерация завершена успешно. Создан файл MD5MD5Hash.json. Для завершения работы нажмите любую кнопку...");
+                Console.WriteLine("Генерация завершена успешно. Создан файл MD5MD5Hash.json. Для завершения работы нажмите любую клавишу...");
             }
             catch (Exception e)
             {
