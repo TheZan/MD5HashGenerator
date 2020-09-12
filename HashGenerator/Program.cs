@@ -12,6 +12,7 @@ namespace HashGenerator
         {
             Console.Write("Введите путь к папке с файлами, для которых нужно сгенерировать хэш:");
             string path = Console.ReadLine();
+            string endFolder = path.Substring(path.LastIndexOf("\\"), path.Length - path.LastIndexOf("\\"));
 
             List<string> files = DirSearch(path);
 
@@ -23,7 +24,7 @@ namespace HashGenerator
             {
                 hashes.Add(new FileHash()
                 {
-                    FileName = file.Substring(file.LastIndexOf("\\") + 1, file.Length - file.LastIndexOf("\\") - 1),
+                    FileName = file.Substring(file.IndexOf($"{endFolder}") + endFolder.Length + 1, file.Length - file.IndexOf($"{endFolder}") - endFolder.Length - 1),
                     Hash = CalculateMD5(file)
                 });
 
@@ -79,7 +80,7 @@ namespace HashGenerator
                     await JsonSerializer.SerializeAsync(fs, hashes);
                 }
 
-                Console.WriteLine("Генерация завершена успешно. Создан файл MD5MD5Hash.json.");
+                Console.WriteLine("Генерация завершена успешно. Создан файл MD5MD5Hash.json. Для завершения работы нажмите любую кнопку...");
             }
             catch (Exception e)
             {
